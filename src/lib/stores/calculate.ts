@@ -1,13 +1,14 @@
 import { writable } from "svelte/store";
 
-function handleCalculate() {
-  const { subscribe, set, update } = writable(150);
+function handleCalculate(number: number) {
+  const { subscribe, set, update } = writable(number);
 
   return {
     subscribe,
     decrement: (value: number) => update((n) => n - value),
-    reset: () => set(150),
+    reset: () => set(number),
   };
 }
 
-export const calculate = handleCalculate();
+export const points = handleCalculate(150);
+export const guesses = handleCalculate(5);

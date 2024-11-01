@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Dropdown from "./Dropdown.svelte";
+  export let isGivenUp: boolean = false;
   let guess = "";
+
   $: testFilterData = ["hello", "hello 1", "a"].filter((data) => {
     if (guess === "") return false;
     return data.includes(guess);
@@ -52,12 +54,13 @@
   >
     <div class="relative w-full">
       <input
+        disabled={isGivenUp}
         id="guessValue"
         type="text"
         bind:value={guess}
         on:change={(e) => handleChange(e)}
         on:click={() => setDropdown()}
-        class="w-full px-2 py-4 rounded-none border border-secondaryColor border-x-0"
+        class="w-full px-2 py-4 rounded-none border border-secondaryColor border-x-0 bg-gray-50 disabled:bg-gray-200"
         placeholder="Input your answer here"
       />
       {#if showDropdown}
@@ -65,9 +68,10 @@
       {/if}
     </div>
     <input
+      disabled={isGivenUp}
       type="submit"
       value="Guess"
-      class="bg-secondaryColor py-2 px-4 hover:bg-[#004995] text-white font-bold rounded-md hover:cursor-pointer"
+      class="bg-secondaryColor py-2 px-4 hover:bg-[#004995] text-white font-bold rounded-md hover:cursor-pointer disabled:bg-gray-700"
     />
   </form>
 </section>

@@ -4,13 +4,18 @@
 </script>
 
 <section
-  class="w-full absolute flex-col flex justify-left items-left h-[100px] bg-white"
+  class="w-full absolute flex-col flex justify-left items-left h-[100px] bg-white text-black"
 >
   {#each filterData as data}
-    <button class="w-full text-left px-2" on:click={() => setAnswer(data)}
-      >{data}</button
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div
+      class="w-full text-left p-2 hover:cursor-pointer"
+      on:click={() => setAnswer(data)}
     >
+      {data}
+    </div>
   {:else}
-    <div>No options</div>
+    <div class="p-2">No options</div>
   {/each}
 </section>
