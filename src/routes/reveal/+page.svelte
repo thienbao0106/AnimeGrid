@@ -2,28 +2,21 @@
   import Level from "$lib/components/Reveal/Level.svelte";
   import Casts from "$lib/components/Reveal/Casts.svelte";
   import Details from "$lib/components/Reveal/Details.svelte";
-  import { points, guesses } from "$lib/stores/calculate";
   import Input from "$lib/components/Reveal/Input.svelte";
   import { getQuestion } from "$lib/utils/fetchQuestion";
   import { onMount } from "svelte";
+  import { points, guesses } from "$lib/stores/calculate";
+  let question: Question | null = null;
   let givenUp = false;
-
-  onMount(async () => {
-    console.log("called");
-    const question = await getQuestion();
-    console.log(question);
-  });
-
   const handleGivenUp = () => {
     givenUp = true;
     console.log("called");
   };
-
-  $: {
-    if ($points <= 0 || $guesses <= 0) {
-      alert("Stopped");
-    }
-  }
+  onMount(async () => {
+    const data: any = await getQuestion();
+    question = data;
+    console.log(data);
+  });
 
   const castData = [
     {
@@ -67,7 +60,7 @@
   <section
     class="bg-white lg:w-[50%] w-[95%] flex flex-col space-y-3 justify-center items-center rounded-lg border-secondaryColor border-2 py-2"
   >
-    <h1>Guess The Title</h1>
+    <h1>{question?.meanScore}</h1>
     <div>Question</div>
     <Input isGivenUp={givenUp} />
     <section class="flex flex-row gap-x-3">
