@@ -1,12 +1,18 @@
 <script lang="ts">
   import Level from "$lib/components/Reveal/Level.svelte";
   import Casts from "$lib/components/Reveal/Casts.svelte";
-  import Details from "$lib/components/Reveal/Details.svelte";
+  import Staffs from "$lib/components/Reveal/Staffs.svelte";
   import Input from "$lib/components/Reveal/Input.svelte";
+  import Details from "$lib/components/Reveal/Details.svelte";
   import { getQuestion } from "$lib/utils/fetchQuestion";
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
+  import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
   let question: Question | null = null;
+  let voiceActorsData: any = [],
+    staffsData: any = [],
+    detailsData: any = [];
+
   let givenUp = false;
   const handleGivenUp = () => {
     givenUp = true;
@@ -15,42 +21,32 @@
   onMount(async () => {
     const data: any = await getQuestion();
     question = data;
-    console.log(data);
+    voiceActorsData = convertVoiceActress(question?.voiceActors || []);
+    staffsData = convertStaff(question?.staffs || []);
+    detailsData = [
+      {
+        role: "Studios",
+        name: question?.studios.join(", "),
+        value: 20,
+      },
+      {
+        role: "Season",
+        name: `${question?.season} ${question?.seasonYear}`,
+        value: 20,
+      },
+      {
+        role: "Mean Score",
+        name: question?.meanScore,
+        value: 20,
+      },
+    ];
   });
 
-  const castData = [
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-    {
-      info: "Actor 1",
-      value: 40,
-    },
-  ];
-
-  const detailsData = [
-    {
-      info: "Detail 1",
-      value: 20,
-    },
-  ];
+  $: {
+    if ($points <= 0 || $guesses === 0) {
+      alert("Stopped");
+    }
+  }
 </script>
 
 <main class="flex flex-col justify-center items-center text-secondaryColor">
@@ -58,10 +54,10 @@
     <Level />
   </section>
   <section
-    class="bg-white lg:w-[50%] w-[95%] flex flex-col space-y-3 justify-center items-center rounded-lg border-secondaryColor border-2 py-2"
+    class="bg-white lg:w-[50%] w-[95%] flex flex-col space-y-3 justify-center items-center rounded-lg border-secondaryColor border-2 py-2 my-6"
   >
-    <h1>{question?.meanScore}</h1>
-    <div>Question</div>
+    <h1>Title with 2 words</h1>
+
     <Input isGivenUp={givenUp} />
     <section class="flex flex-row gap-x-3">
       <div>Points: <span class="font-bold">{$points}</span></div>
@@ -77,8 +73,9 @@
         Give Up
       </p>
     </section>
-    <section class="px-2 w-full">
-      <Casts data={castData} />
+    <section class="px-2 w-full space-y-5">
+      <Casts data={voiceActorsData} />
+      <Staffs data={staffsData} />
       <Details data={detailsData} />
     </section>
   </section>

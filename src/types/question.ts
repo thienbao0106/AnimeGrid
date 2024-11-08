@@ -13,6 +13,7 @@ type VoiceActor = {
 type Question = {
   title: string;
   studios: string[];
+  seasonYear: number;
   staffs: Staff[];
   meanScore: number;
   genres: string[];

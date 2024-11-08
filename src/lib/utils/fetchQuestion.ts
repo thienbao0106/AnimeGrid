@@ -31,8 +31,7 @@ const schema = `
             }
         }
       }
-        
-      
+      seasonYear
       staff {
         edges {
             role 
@@ -89,6 +88,7 @@ const convertToQuestion: (data: any) => Question = (data: any) => {
     meanScore: temp.meanScore,
     genres: temp.genres,
     bannerImage: temp.bannerImage,
+    seasonYear: temp.seasonYear,
     season: temp.season,
     staffs: staffsData,
     studios: studioData,
