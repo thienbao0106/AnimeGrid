@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Dropdown from "./Dropdown.svelte";
+  import { fetchDropdown } from "$lib/utils/fetchDropdown";
   export let isGivenUp: boolean = false;
-  let guess = "";
+  export let setGuess: any;
+  console.log(isGivenUp);
+  let guess: string = "",
+    filteredData: any[] = [];
 
-  $: testFilterData = ["hello", "hello 1", "a"].filter((data) => {
-    if (guess === "") return false;
-    return data.includes(guess);
-  });
   $: showDropdown = false;
 
   //Set on mount
@@ -28,14 +28,18 @@
     });
   });
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    setGuess(guess);
+  };
 
-  const handleChange = (
+  const handleChange = async (
     e: Event & {
       currentTarget: EventTarget & HTMLInputElement;
     }
   ) => {
-    console.log(e.currentTarget.value);
+    if (guess === "") return;
+    const data = await fetchDropdown(e.currentTarget.value);
+    filteredData = data;
   };
 
   const setAnswer = (selectedAnswer: string) => {
@@ -64,7 +68,7 @@
         placeholder="Input your answer here"
       />
       {#if showDropdown}
-        <Dropdown filterData={testFilterData} {setAnswer} />
+        <Dropdown filterData={filteredData} {setAnswer} />
       {/if}
     </div>
     <input

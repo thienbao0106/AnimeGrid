@@ -4,7 +4,7 @@
 </script>
 
 <section
-  class="w-full absolute flex-col flex justify-left items-left h-[100px] bg-white text-black"
+  class="w-full absolute flex-col flex justify-left items-left h-[150px] z-50 overflow-y-scroll bg-white text-black"
 >
   {#each filterData as data}
     <!-- svelte-ignore a11y_no_static_element_interactions -->

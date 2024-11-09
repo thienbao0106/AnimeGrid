@@ -1,23 +1,18 @@
 <script lang="ts">
   import Level from "$lib/components/Reveal/Level.svelte";
-  import Casts from "$lib/components/Reveal/Casts.svelte";
-  import Staffs from "$lib/components/Reveal/Staffs.svelte";
+  import Section from "$lib/components/Reveal/Section.svelte";
   import Input from "$lib/components/Reveal/Input.svelte";
-  import Details from "$lib/components/Reveal/Details.svelte";
+
   import { getQuestion } from "$lib/utils/fetchQuestion";
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
   import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
+
   let question: Question | null = null;
   let voiceActorsData: any = [],
     staffsData: any = [],
     detailsData: any = [];
-
-  let givenUp = false;
-  const handleGivenUp = () => {
-    givenUp = true;
-    console.log("called");
-  };
+  let endGame = false;
   onMount(async () => {
     const data: any = await getQuestion();
     question = data;
@@ -42,9 +37,21 @@
     ];
   });
 
+  const handleGivenUp = () => {
+    endGame = true;
+  };
+
+  const setGuess = (userAnswer: string) => {
+    guesses.decrement(1);
+    if (userAnswer !== question?.title) return;
+    endGame = true;
+    alert("Correct Answer");
+  };
+
   $: {
     if ($points <= 0 || $guesses === 0) {
       alert("Stopped");
+      endGame = true;
     }
   }
 </script>
@@ -58,7 +65,7 @@
   >
     <h1>Title with 2 words</h1>
 
-    <Input isGivenUp={givenUp} />
+    <Input isGivenUp={endGame} {setGuess} />
     <section class="flex flex-row gap-x-3">
       <div>Points: <span class="font-bold">{$points}</span></div>
       <div>Guesses Left: <span class="font-bold">{$guesses}</span></div>
@@ -74,9 +81,9 @@
       </p>
     </section>
     <section class="px-2 w-full space-y-5">
-      <Casts data={voiceActorsData} />
-      <Staffs data={staffsData} />
-      <Details data={detailsData} />
+      <Section data={voiceActorsData} title="Voice Actors" />
+      <Section data={staffsData} title="Staff" />
+      <Section data={detailsData} title="Details" />
     </section>
   </section>
 </main>
