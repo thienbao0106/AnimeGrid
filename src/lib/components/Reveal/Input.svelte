@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Dropdown from "./Dropdown.svelte";
-  import { fetchDropdown } from "$lib/utils/fetchDropdown";
+  import { fetchDropdown } from "$lib/utils/jikan/fetchDropdown";
   export let isGivenUp: boolean = false;
   export let setGuess: any;
   console.log(isGivenUp);

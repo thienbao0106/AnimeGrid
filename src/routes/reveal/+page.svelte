@@ -3,7 +3,7 @@
   import Section from "$lib/components/Reveal/Section.svelte";
   import Input from "$lib/components/Reveal/Input.svelte";
 
-  import { getQuestion } from "$lib/utils/fetchQuestion";
+  import { getQuestion } from "$lib/utils/jikan/fetchQuestionByJikan";
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
   import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
