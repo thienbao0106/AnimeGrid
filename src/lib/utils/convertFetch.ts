@@ -33,6 +33,7 @@ export const convertStaff = (staffs: Staff[]) => {
         value: values[index],
         name: staff.name,
         role: staff.role,
+        image: staff.image,
       };
     });
 };

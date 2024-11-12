@@ -9,9 +9,10 @@ const getStaffs: (id: number) => Promise<Staff[]> = async (id: number) => {
     return {
       name: data.person.name.replace(",", ""),
       role: data.positions[0],
-      image: data.person.images?.jpg.image_url ?? "",
+      image: data.person.images.jpg.image_url,
     };
   });
+
   return staffs;
 };
 
@@ -28,7 +29,7 @@ const getVoiceActors: (id: number) => Promise<VoiceActor[]> = async (
       return {
         role: data.role,
         name: data.voice_actors[0].person.name.replace(",", ""),
-        image: data.voice_actors[0].images?.jpg.image_url ?? "",
+        image: data.voice_actors[0].person.images?.jpg.image_url ?? "",
       };
     });
   return voiceActors;
@@ -54,7 +55,7 @@ export const getQuestion = async () => {
     },
     { image: "", name: endingStaff, role: "Theme Song Performance (ED)" }
   );
-  console.log(staffs);
+
   const question: Question = {
     seasonYear: data.year,
     meanScore: data.score,

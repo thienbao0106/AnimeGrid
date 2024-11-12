@@ -2,6 +2,7 @@
   import Level from "$lib/components/Reveal/Level.svelte";
   import Section from "$lib/components/Reveal/Section.svelte";
   import Input from "$lib/components/Reveal/Input.svelte";
+  import AnswerModal from "$lib/components/Reveal/AnswerModal.svelte";
 
   import { getQuestion } from "$lib/utils/jikan/fetchQuestionByJikan";
   import { onMount } from "svelte";
@@ -11,13 +12,15 @@
   let question: Question | null = null;
   let voiceActorsData: any = [],
     staffsData: any = [],
-    detailsData: any = [];
+    detailsData: any = [],
+    isShowModal = false;
   let endGame = false;
   onMount(async () => {
     const data: any = await getQuestion();
     question = data;
     voiceActorsData = convertVoiceActress(question?.voiceActors || []);
     staffsData = convertStaff(question?.staffs || []);
+    console.log(staffsData);
     detailsData = [
       {
         role: "Studios",
@@ -39,6 +42,8 @@
 
   const handleGivenUp = () => {
     endGame = true;
+    isShowModal = true;
+    points.set(0);
   };
 
   const setGuess = (userAnswer: string) => {
@@ -46,15 +51,29 @@
     if (userAnswer !== question?.title) return;
     endGame = true;
     alert("Correct Answer");
+    isShowModal = true;
+  };
+
+  const setShowModal = (showModal: boolean) => {
+    isShowModal = showModal;
   };
 
   $: {
     if ($points <= 0 || $guesses === 0) {
       alert("Stopped");
       endGame = true;
+      isShowModal = true;
     }
   }
 </script>
+
+{#if endGame && isShowModal}
+  <AnswerModal
+    {setShowModal}
+    title={question?.title}
+    image={question?.bannerImage}
+  />
+{/if}
 
 <main class="flex flex-col justify-center items-center text-secondaryColor">
   <section class="">
@@ -77,7 +96,7 @@
         on:click={() => handleGivenUp()}
         class="underline hover:cursor-pointer"
       >
-        Give Up
+        {endGame ? "Show Answer" : "Give up"}
       </p>
     </section>
     <section class="px-2 w-full space-y-5">

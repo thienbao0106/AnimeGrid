@@ -7,6 +7,7 @@ function handleCalculate(number: number) {
     subscribe,
     decrement: (value: number) => update((n) => n - value),
     reset: () => set(number),
+    set,
   };
 }
 
