@@ -4,10 +4,12 @@
   import Input from "$lib/components/Reveal/Input.svelte";
   import AnswerModal from "$lib/components/Reveal/AnswerModal.svelte";
 
-  import { getQuestion } from "$lib/utils/jikan/fetchQuestionByJikan";
+  import { getQuestion } from "$lib/utils/anilist/fetchQuestionByAnilist";
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
   import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
+  import { checkHistory, setHistory } from "$lib/utils/setHistory";
+  import moment from "moment";
 
   let question: Question | null = null;
   let voiceActorsData: any = [],
@@ -15,10 +17,12 @@
     detailsData: any = [],
     isShowModal = false;
   let endGame = false;
+
   onMount(async () => {
     const data: any = await getQuestion();
     question = data;
     voiceActorsData = convertVoiceActress(question?.voiceActors || []);
+
     staffsData = convertStaff(question?.staffs || []);
     console.log(staffsData);
     detailsData = [
@@ -38,6 +42,12 @@
         value: 20,
       },
     ];
+
+    if (checkHistory()) {
+      alert("You've already played the game, please wait for next day");
+      endGame = true;
+      return;
+    }
   });
 
   const handleGivenUp = () => {
@@ -50,7 +60,6 @@
     guesses.decrement(1);
     if (userAnswer !== question?.title) return;
     endGame = true;
-    alert("Correct Answer");
     isShowModal = true;
   };
 
@@ -60,8 +69,14 @@
 
   $: {
     if ($points <= 0 || $guesses === 0) {
-      alert("Stopped");
       endGame = true;
+      setHistory({
+        type: "reveal",
+        level: "normal",
+        points: $points,
+        guesses: $guesses,
+        date: moment(),
+      });
       isShowModal = true;
     }
   }

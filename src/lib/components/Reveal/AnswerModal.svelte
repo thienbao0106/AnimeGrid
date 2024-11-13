@@ -16,10 +16,10 @@
 </script>
 
 <dialog
-  class="h-[650px] lg:w-1/3 w-full pt-0.5 px-2 border-2 rounded-sm border-secondaryColor text-secondaryColor space-y-3 flex flex-col justify-center items-center"
+  class="h-[650px] lg:w-1/3 w-full pt-0.5 px-2 border-2 rounded-sm border-secondaryColor text-secondaryColor space-y-3 flex flex-col justify-start items-center"
   id="answer"
 >
-  <div class="flex justify-end w-full items-center -pt-3">
+  <div class="">
     <button on:click={handleCloseModal} class="hover:font-bold bg-transparent"
       >X</button
     >
