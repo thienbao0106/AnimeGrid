@@ -35,7 +35,7 @@ const getVoiceActors: (id: number) => Promise<VoiceActor[]> = async (
   return voiceActors;
 };
 
-export const getQuestion = async () => {
+export const getQuestionByJikan = async () => {
   const result = await axios.get(
     `https://api.jikan.moe/v4/anime/${malId}/full`
   );

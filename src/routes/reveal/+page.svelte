@@ -4,25 +4,48 @@
   import Input from "$lib/components/Reveal/Input.svelte";
   import AnswerModal from "$lib/components/Reveal/AnswerModal.svelte";
 
-  import { getQuestion } from "$lib/utils/anilist/fetchQuestionByAnilist";
+  import { getQuestionByJikan } from "$lib/utils/jikan/fetchQuestionByJikan";
+  import { getQuestionByAnilist } from "$lib/utils/anilist/fetchQuestionByAnilist";
+
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
   import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
-  import { checkHistory, setHistory } from "$lib/utils/setHistory";
-  import moment from "moment";
+  import {
+    checkHistory,
+    historyObject,
+    setHistory,
+    getHistory,
+  } from "$lib/utils/setHistory";
 
   let question: Question | null = null;
   let voiceActorsData: any = [],
     staffsData: any = [],
     detailsData: any = [],
-    isShowModal = false;
+    isShowModal = false,
+    isGivenUp = false;
   let endGame = false;
 
   onMount(async () => {
-    const data: any = await getQuestion();
+    let data: any = {};
+    let existedScore: any;
+    try {
+      data = await getQuestionByAnilist();
+    } catch (error) {
+      data = await getQuestionByJikan();
+    }
     question = data;
-    voiceActorsData = convertVoiceActress(question?.voiceActors || []);
 
+    if (checkHistory()) {
+      alert("You've already played the game, please wait for next day");
+      endGame = true;
+      isGivenUp = true;
+      existedScore = getHistory()[0];
+      points.set(existedScore.points);
+      guesses.set(existedScore.guesses);
+      return;
+    }
+
+    voiceActorsData = convertVoiceActress(question?.voiceActors || []);
     staffsData = convertStaff(question?.staffs || []);
     console.log(staffsData);
     detailsData = [
@@ -42,49 +65,47 @@
         value: 20,
       },
     ];
-
-    if (checkHistory()) {
-      alert("You've already played the game, please wait for next day");
-      endGame = true;
-      return;
-    }
   });
 
-  const handleGivenUp = () => {
+  const finishQuiz = () => {
     endGame = true;
     isShowModal = true;
+    setHistory(historyObject("reveal", "normal", $points, $guesses));
+  };
+
+  const handleGivenUp = () => {
+    isGivenUp = true;
     points.set(0);
+    finishQuiz();
+  };
+
+  const showAnswerModal = () => {
+    isShowModal = true;
   };
 
   const setGuess = (userAnswer: string) => {
     guesses.decrement(1);
+    console.log("called");
+
     if (userAnswer !== question?.title) return;
-    endGame = true;
-    isShowModal = true;
+    finishQuiz();
+    return;
   };
 
-  const setShowModal = (showModal: boolean) => {
-    isShowModal = showModal;
+  const setCloseModal = () => {
+    isShowModal = false;
   };
 
   $: {
-    if ($points <= 0 || $guesses === 0) {
-      endGame = true;
-      setHistory({
-        type: "reveal",
-        level: "normal",
-        points: $points,
-        guesses: $guesses,
-        date: moment(),
-      });
-      isShowModal = true;
+    if (($points <= 0 || $guesses === 0) && isGivenUp === false) {
+      finishQuiz();
     }
   }
 </script>
 
-{#if endGame && isShowModal}
+{#if isGivenUp || isShowModal}
   <AnswerModal
-    {setShowModal}
+    {setCloseModal}
     title={question?.title}
     image={question?.bannerImage}
   />
@@ -99,7 +120,7 @@
   >
     <h1>Title with 2 words</h1>
 
-    <Input isGivenUp={endGame} {setGuess} />
+    <Input {isGivenUp} {setGuess} />
     <section class="flex flex-row gap-x-3">
       <div>Points: <span class="font-bold">{$points}</span></div>
       <div>Guesses Left: <span class="font-bold">{$guesses}</span></div>
@@ -108,7 +129,9 @@
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <p
-        on:click={() => handleGivenUp()}
+        on:click={() => {
+          isGivenUp === false ? handleGivenUp() : showAnswerModal();
+        }}
         class="underline hover:cursor-pointer"
       >
         {endGame ? "Show Answer" : "Give up"}
