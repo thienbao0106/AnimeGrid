@@ -111,6 +111,6 @@ export const getQuestionByAnilist = async () => {
     }
   );
   const { data } = result;
-  if (!data) return;
+  if (!data) return {};
   return convertToQuestion(data);
 };

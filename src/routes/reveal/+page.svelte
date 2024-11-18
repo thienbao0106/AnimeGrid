@@ -3,10 +3,6 @@
   import Section from "$lib/components/Reveal/Section.svelte";
   import Input from "$lib/components/Reveal/Input.svelte";
   import AnswerModal from "$lib/components/Reveal/AnswerModal.svelte";
-
-  import { getQuestionByJikan } from "$lib/utils/jikan/fetchQuestionByJikan";
-  import { getQuestionByAnilist } from "$lib/utils/anilist/fetchQuestionByAnilist";
-
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
   import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
@@ -16,28 +12,23 @@
     setHistory,
     getHistory,
   } from "$lib/utils/setHistory";
+  import AlreadyPlayed from "$lib/components/Reveal/AlreadyPlayed.svelte";
+  import { fetchQuestion } from "$lib/utils/fetchQuestion";
 
-  let question: Question | null = null;
+  let question: Question;
   let voiceActorsData: any = [],
     staffsData: any = [],
     detailsData: any = [],
     isShowModal = false,
     isGivenUp = false;
   let endGame = false;
+  let existedScore: any;
 
   onMount(async () => {
-    let data: any = {};
-    let existedScore: any;
-    try {
-      data = await getQuestionByAnilist();
-    } catch (error) {
-      data = await getQuestionByJikan();
-    }
-    question = data;
-
+    question = await fetchQuestion();
     if (checkHistory()) {
       alert("You've already played the game, please wait for next day");
-      endGame = true;
+      // endGame = true;
       isGivenUp = true;
       existedScore = getHistory()[0];
       points.set(existedScore.points);
@@ -45,9 +36,8 @@
       return;
     }
 
-    voiceActorsData = convertVoiceActress(question?.voiceActors || []);
-    staffsData = convertStaff(question?.staffs || []);
-    console.log(staffsData);
+    voiceActorsData = convertVoiceActress(question.voiceActors);
+    staffsData = convertStaff(question.staffs);
     detailsData = [
       {
         role: "Studios",
@@ -81,12 +71,15 @@
 
   const showAnswerModal = () => {
     isShowModal = true;
+    endGame = true;
+    const answerModal: any = document.querySelector("#answer");
+    if (!answerModal) return;
+    answerModal.showModal();
+    return;
   };
 
   const setGuess = (userAnswer: string) => {
     guesses.decrement(1);
-    console.log("called");
-
     if (userAnswer !== question?.title) return;
     finishQuiz();
     return;
@@ -103,7 +96,7 @@
   }
 </script>
 
-{#if isGivenUp || isShowModal}
+{#if (isGivenUp || isShowModal) && endGame}
   <AnswerModal
     {setCloseModal}
     title={question?.title}
@@ -121,26 +114,36 @@
     <h1>Title with 2 words</h1>
 
     <Input {isGivenUp} {setGuess} />
-    <section class="flex flex-row gap-x-3">
-      <div>Points: <span class="font-bold">{$points}</span></div>
-      <div>Guesses Left: <span class="font-bold">{$guesses}</span></div>
-    </section>
+    {#if !existedScore}
+      <section class="flex flex-row gap-x-3">
+        <div>Points: <span class="font-bold">{$points}</span></div>
+        <div>Guesses Left: <span class="font-bold">{$guesses}</span></div>
+      </section>
+    {/if}
     <section>
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <p
         on:click={() => {
-          isGivenUp === false ? handleGivenUp() : showAnswerModal();
+          isGivenUp === false && endGame === false
+            ? handleGivenUp()
+            : showAnswerModal();
         }}
         class="underline hover:cursor-pointer"
       >
-        {endGame ? "Show Answer" : "Give up"}
+        {existedScore ? "Show Answer" : "Give up"}
       </p>
     </section>
-    <section class="px-2 w-full space-y-5">
-      <Section data={voiceActorsData} title="Voice Actors" />
-      <Section data={staffsData} title="Staff" />
-      <Section data={detailsData} title="Details" />
-    </section>
+    {#if !existedScore}
+      <section class="px-2 w-full space-y-5">
+        <Section data={voiceActorsData} title="Voice Actors" />
+        <Section data={staffsData} title="Staff" />
+        <Section data={detailsData} title="Details" />
+      </section>
+    {:else}
+      <section>
+        <AlreadyPlayed data={existedScore} />
+      </section>
+    {/if}
   </section>
 </main>

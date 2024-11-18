@@ -41,7 +41,7 @@ export const getQuestionByJikan = async () => {
   );
   const staffs = await getStaffs(malId);
   const voiceActors = await getVoiceActors(malId);
-  if (!result.data || !staffs || !voiceActors) return;
+  if (!result.data || !staffs || !voiceActors) return {};
   const { data } = result.data;
   const genres = data.genres.map((genre: any) => genre.name);
   const studios = data.studios.map((studio: any) => studio.name);

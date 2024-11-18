@@ -3,7 +3,6 @@
   import Box from "./Box.svelte";
   export let data: any[];
   export let title: string;
-  console.log(data);
 </script>
 
 <div class="w-full flex justify-center items-center flex-col">
