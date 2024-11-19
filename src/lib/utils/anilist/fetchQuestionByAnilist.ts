@@ -97,7 +97,7 @@ const convertToQuestion: (data: any) => Question = (data: any) => {
   return question;
 };
 
-export const getQuestionByAnilist = async () => {
+export const getQuestionByAnilist = async (level: string) => {
   const result = await axios.post(
     url,
     {

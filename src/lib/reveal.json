@@ -1,0 +1,18 @@
+[
+  {
+    "level": "normal",
+    "questionId": {
+      "malId": "34798",
+      "anilistId": "98444"
+    },
+    "question": "Title with 2 words"
+  },
+  {
+    "level": "hard",
+    "questionId": {
+      "malId": "34798",
+      "anilistId": "98444"
+    },
+    "question": "Title with 3 words"
+  }
+]

@@ -5,7 +5,13 @@
   import AnswerModal from "$lib/components/Reveal/AnswerModal.svelte";
   import { onMount } from "svelte";
   import { points, guesses } from "$lib/stores/calculate";
-  import { convertStaff, convertVoiceActress } from "$lib/utils/convertFetch";
+  import { level } from "$lib/stores/level";
+
+  import {
+    convertStaff,
+    convertVoiceActress,
+    convertDetail,
+  } from "$lib/utils/convertFetch";
   import {
     checkHistory,
     historyObject,
@@ -14,8 +20,10 @@
   } from "$lib/utils/setHistory";
   import AlreadyPlayed from "$lib/components/Reveal/AlreadyPlayed.svelte";
   import { fetchQuestion } from "$lib/utils/fetchQuestion";
+  import questions from "../../lib/reveal.json";
 
-  let question: Question;
+  let question: Question, questionData: any;
+
   let voiceActorsData: any = [],
     staffsData: any = [],
     detailsData: any = [],
@@ -25,7 +33,8 @@
   let existedScore: any;
 
   onMount(async () => {
-    question = await fetchQuestion();
+    questionData = questions.find((diff) => diff.level === $level);
+    question = await fetchQuestion(questionData);
     if (checkHistory()) {
       alert("You've already played the game, please wait for next day");
       // endGame = true;
@@ -38,29 +47,14 @@
 
     voiceActorsData = convertVoiceActress(question.voiceActors);
     staffsData = convertStaff(question.staffs);
-    detailsData = [
-      {
-        role: "Studios",
-        name: question?.studios.join(", "),
-        value: 20,
-      },
-      {
-        role: "Season",
-        name: `${question?.season} ${question?.seasonYear}`,
-        value: 20,
-      },
-      {
-        role: "Mean Score",
-        name: question?.meanScore,
-        value: 20,
-      },
-    ];
+    detailsData = convertDetail(question);
   });
 
   const finishQuiz = () => {
     endGame = true;
     isShowModal = true;
-    setHistory(historyObject("reveal", "normal", $points, $guesses));
+    isGivenUp = true;
+    setHistory(historyObject("reveal", $level, $points, $guesses));
   };
 
   const handleGivenUp = () => {
@@ -93,6 +87,7 @@
     if (($points <= 0 || $guesses === 0) && isGivenUp === false) {
       finishQuiz();
     }
+    questionData = questions.find((diff) => diff.level === $level);
   }
 </script>
 
@@ -111,7 +106,7 @@
   <section
     class="bg-white lg:w-[50%] w-[95%] flex flex-col space-y-3 justify-center items-center rounded-lg border-secondaryColor border-2 py-2 my-6"
   >
-    <h1>Title with 2 words</h1>
+    <h1>{questionData?.question}</h1>
 
     <Input {isGivenUp} {setGuess} />
     {#if !existedScore}
@@ -131,7 +126,7 @@
         }}
         class="underline hover:cursor-pointer"
       >
-        {existedScore ? "Show Answer" : "Give up"}
+        {existedScore || endGame ? "Show Answer" : "Give up"}
       </p>
     </section>
     {#if !existedScore}

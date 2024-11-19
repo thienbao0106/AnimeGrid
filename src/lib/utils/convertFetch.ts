@@ -37,3 +37,23 @@ export const convertStaff = (staffs: Staff[]) => {
       };
     });
 };
+
+export const convertDetail = (question: any) => {
+  return [
+    {
+      role: "Studios",
+      name: question?.studios.join(", "),
+      value: 20,
+    },
+    {
+      role: "Season",
+      name: `${question?.season} ${question?.seasonYear}`,
+      value: 20,
+    },
+    {
+      role: "Mean Score",
+      name: question?.meanScore,
+      value: 20,
+    },
+  ];
+};

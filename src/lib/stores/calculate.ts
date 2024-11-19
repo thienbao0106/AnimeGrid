@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-function handleCalculate(number: number) {
+const handleCalculate = (number: number) => {
   const { subscribe, set, update } = writable(number);
 
   return {
