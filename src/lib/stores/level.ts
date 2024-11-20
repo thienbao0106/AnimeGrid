@@ -1,11 +1,9 @@
 import { writable } from "svelte/store";
-
 const handleLevel = (level: string) => {
   const { subscribe, set, update } = writable(level);
   return {
     subscribe,
     setLevel: (diff: string) => {
-      console.log(diff);
       update((n) => (n = diff));
     },
     set,

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const schema = `
+const schema = (id: string) => {
+  return `
  {
   Page {
     media(type: ANIME, id: 98444) {
@@ -58,6 +59,8 @@ const schema = `
   }
 }
 `;
+};
+
 const url = "https://graphql.anilist.co";
 
 const convertToQuestion: (data: any) => Question = (data: any) => {
@@ -97,11 +100,12 @@ const convertToQuestion: (data: any) => Question = (data: any) => {
   return question;
 };
 
-export const getQuestionByAnilist = async (level: string) => {
+export const getQuestionByAnilist = async (id: string) => {
+  console.log("anilist: " + id);
   const result = await axios.post(
     url,
     {
-      query: schema,
+      query: schema(id),
     },
     {
       headers: {

@@ -29,9 +29,14 @@ export const getHistory = () => {
   return JSON.parse(localStorage.getItem("stats") || "") ?? [];
 };
 
-export const checkHistory = () => {
-  const data = getHistory();
-  if (data.length === 0) return false;
-  const dataDate: any = moment(data[0].date);
+export const checkHistory = (listHistory: any, level: string) => {
+  if (!listHistory || listHistory?.length === 0) return false;
+  console.log(level);
+  const history = listHistory.find((history: any) => history.level === level);
+  console.log(history);
+  if (!history) return false;
+  if (history.length === 0) return false;
+  const dataDate: any = moment(history.date);
+  console.log(moment().diff(dataDate, "hours"));
   return moment().diff(dataDate, "hours") < 24;
 };

@@ -30,24 +30,31 @@
     isShowModal = false,
     isGivenUp = false;
   let endGame = false;
-  let existedScore: any;
+  let existedScore: any, tempHistory: any;
 
-  onMount(async () => {
-    questionData = questions.find((diff) => diff.level === $level);
+  const setupQuestion = async (history: any, level: string) => {
+    questionData = questions.find((diff) => diff.level === level);
     question = await fetchQuestion(questionData);
-    if (checkHistory()) {
-      alert("You've already played the game, please wait for next day");
-      // endGame = true;
+    if (checkHistory(history, level)) {
+      endGame = true;
       isGivenUp = true;
-      existedScore = getHistory()[0];
+      existedScore = history.find((his: any) => his.level === level);
       points.set(existedScore.points);
       guesses.set(existedScore.guesses);
       return;
     }
-
+    endGame = false;
+    isGivenUp = false;
+    existedScore = null;
     voiceActorsData = convertVoiceActress(question.voiceActors);
+    console.log(voiceActorsData);
     staffsData = convertStaff(question.staffs);
     detailsData = convertDetail(question);
+  };
+
+  onMount(async () => {
+    tempHistory = getHistory();
+    await setupQuestion(tempHistory, $level);
   });
 
   const finishQuiz = () => {
@@ -87,7 +94,8 @@
     if (($points <= 0 || $guesses === 0) && isGivenUp === false) {
       finishQuiz();
     }
-    questionData = questions.find((diff) => diff.level === $level);
+
+    setupQuestion(tempHistory, $level);
   }
 </script>
 

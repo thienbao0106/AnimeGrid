@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const malId: number = 34798;
-
 const getStaffs: (id: number) => Promise<Staff[]> = async (id: number) => {
   const result = await axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`);
   if (!result.data) return [];
@@ -35,7 +33,8 @@ const getVoiceActors: (id: number) => Promise<VoiceActor[]> = async (
   return voiceActors;
 };
 
-export const getQuestionByJikan = async (level: string) => {
+export const getQuestionByJikan = async (malId: number) => {
+  console.log("mal id: " + malId);
   const result = await axios.get(
     `https://api.jikan.moe/v4/anime/${malId}/full`
   );
