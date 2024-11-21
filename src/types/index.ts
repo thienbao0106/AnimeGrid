@@ -21,3 +21,11 @@ type Question = {
   season: string;
   bannerImage: string;
 };
+
+type UserHistory = {
+  mode: string;
+  level: string;
+  points: number;
+  guesses: number;
+  date: Date;
+};

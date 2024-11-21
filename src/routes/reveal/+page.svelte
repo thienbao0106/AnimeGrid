@@ -12,15 +12,11 @@
     convertVoiceActress,
     convertDetail,
   } from "$lib/utils/convertFetch";
-  import {
-    checkHistory,
-    historyObject,
-    setHistory,
-    getHistory,
-  } from "$lib/utils/setHistory";
+  import { checkHistory, setHistory, getHistory } from "$lib/utils/setHistory";
   import AlreadyPlayed from "$lib/components/Reveal/AlreadyPlayed.svelte";
   import { fetchQuestion } from "$lib/utils/fetchQuestion";
   import questions from "../../lib/reveal.json";
+  import moment from "moment";
 
   let question: Question, questionData: any;
 
@@ -47,13 +43,13 @@
     isGivenUp = false;
     existedScore = null;
     voiceActorsData = convertVoiceActress(question.voiceActors);
-    console.log(voiceActorsData);
     staffsData = convertStaff(question.staffs);
     detailsData = convertDetail(question);
   };
 
   onMount(async () => {
     tempHistory = getHistory();
+    // tempLevel = $level;
     await setupQuestion(tempHistory, $level);
   });
 
@@ -61,7 +57,14 @@
     endGame = true;
     isShowModal = true;
     isGivenUp = true;
-    setHistory(historyObject("reveal", $level, $points, $guesses));
+    const data: UserHistory = {
+      mode: "reveal",
+      level: $level,
+      points: $points,
+      guesses: $guesses,
+      date: moment().toDate(),
+    };
+    setHistory(data);
   };
 
   const handleGivenUp = () => {
@@ -86,6 +89,13 @@
     return;
   };
 
+  const setUserLevel = (nextLevel: string) => {
+    if (nextLevel === $level) return;
+    console.log("check user level");
+    level.setLevel(nextLevel);
+    setupQuestion(tempHistory, $level);
+  };
+
   const setCloseModal = () => {
     isShowModal = false;
   };
@@ -94,8 +104,6 @@
     if (($points <= 0 || $guesses === 0) && isGivenUp === false) {
       finishQuiz();
     }
-
-    setupQuestion(tempHistory, $level);
   }
 </script>
 
@@ -109,7 +117,7 @@
 
 <main class="flex flex-col justify-center items-center text-secondaryColor">
   <section class="">
-    <Level />
+    <Level {setUserLevel} />
   </section>
   <section
     class="bg-white lg:w-[50%] w-[95%] flex flex-col space-y-3 justify-center items-center rounded-lg border-secondaryColor border-2 py-2 my-6"

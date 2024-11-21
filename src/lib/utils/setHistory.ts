@@ -13,13 +13,13 @@ export const historyObject = (
     date: moment(),
   };
 };
-export const setHistory = (data: any) => {
+export const setHistory = (history: UserHistory) => {
   if (!localStorage.getItem("stats")) {
-    localStorage.setItem("stats", JSON.stringify([data]));
+    localStorage.setItem("stats", JSON.stringify([history]));
     return;
   }
   const currentData = JSON.parse(localStorage.getItem("stats") || "");
-  currentData.unshift(data);
+  currentData.unshift(history);
   localStorage.setItem("stats", JSON.stringify(currentData));
   return;
 };
