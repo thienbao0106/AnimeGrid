@@ -17,6 +17,7 @@
   import { fetchQuestion } from "$lib/utils/fetchQuestion";
   import questions from "../../lib/reveal.json";
   import moment from "moment";
+  import { defaultQuestion } from "$lib/utils/defaultValue";
 
   let question: Question, questionData: any;
 
@@ -42,6 +43,7 @@
     endGame = false;
     isGivenUp = false;
     existedScore = null;
+
     voiceActorsData = convertVoiceActress(question.voiceActors);
     staffsData = convertStaff(question.staffs);
     detailsData = convertDetail(question);
@@ -49,6 +51,7 @@
 
   onMount(async () => {
     tempHistory = getHistory();
+
     // tempLevel = $level;
     await setupQuestion(tempHistory, $level);
   });
@@ -89,11 +92,11 @@
     return;
   };
 
-  const setUserLevel = (nextLevel: string) => {
+  const setUserLevel = async (nextLevel: string) => {
     if (nextLevel === $level) return;
     console.log("check user level");
     level.setLevel(nextLevel);
-    setupQuestion(tempHistory, $level);
+    await setupQuestion(tempHistory, nextLevel);
   };
 
   const setCloseModal = () => {

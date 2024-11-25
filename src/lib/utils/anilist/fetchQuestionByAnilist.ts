@@ -4,7 +4,7 @@ const schema = (id: string) => {
   return `
  {
   Page {
-    media(type: ANIME, id: 98444) {
+    media(type: ANIME, id: ${id}) {
       id
       title {
         romaji

@@ -14,7 +14,11 @@
       <a href="/reveal">Anime Reveal</a>
     </section>
   {/if}
-  <div class="flex-none lg:w-1/4 text-right">Our social</div>
+
+  <div class="flex flex-row gap-x-2 justify-end lg:w-1/4 text-right">
+    <div><a href="/history">History</a></div>
+    <div>Our social</div>
+  </div>
 </header>
 
 <style>

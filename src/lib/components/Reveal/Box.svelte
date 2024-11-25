@@ -1,11 +1,13 @@
 <script lang="ts">
   import { points, guesses } from "$lib/stores/calculate";
   import PersonModal from "./PersonModal.svelte";
+  import { level } from "../../stores/level";
   export let name: string;
   export let role: string;
   export let image: string;
   export let value = 0;
-  let isShowModal = false;
+  let isShowModal = false,
+    currentLevel: string = $level;
   $: isShow = false;
 
   const handleShowPersonImage = () => {
@@ -14,6 +16,12 @@
   const setCloseModal = () => {
     isShowModal = false;
   };
+  $: {
+    if (currentLevel !== $level) {
+      isShow = false;
+    }
+    currentLevel = $level;
+  }
 </script>
 
 {#if isShowModal}
