@@ -10,7 +10,7 @@
   <div class="flex-none font-bold text-4xl lg:w-1/4">AnimeGrid</div>
   {#if width >= 1024}
     <section class="flex flex-row gap-x-3 justify-center items-center lg:w-2/4">
-      <a href="/">Anime Grid</a>
+      <a href="/grid">Anime Grid</a>
       <a href="/reveal">Anime Reveal</a>
     </section>
   {/if}

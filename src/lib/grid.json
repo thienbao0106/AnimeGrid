@@ -1,0 +1,22 @@
+{
+  "characters": [
+    {
+      "type": "studio",
+      "name": "JC Staff"
+    },
+    {
+      "type": "studio",
+      "name": "Science Saru"
+    }
+  ],
+  "questions": [
+    {
+      "reg": "",
+      "title": "Title starts with 'Kimi'"
+    },
+    {
+      "reg": "",
+      "title": "Only has 1 word"
+    }
+  ]
+}
