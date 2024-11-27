@@ -6,6 +6,7 @@
   let currentQuestion: any,
     isShowModal: boolean = false;
   const totalQuestions: any[] = [];
+
   for (
     let characterIndex = 0;
     characterIndex < questions.characters.length;
@@ -65,7 +66,11 @@
       <div class={`grid grid-cols-${totalQuestions.length / 2}`}>
         {#each totalQuestions as quiz}
           <div>
-            <Box question={quiz} setQuestion={setCurrentQuestion} />
+            <Box
+              boxId={`box-${quiz.id}`}
+              question={quiz}
+              setQuestion={setCurrentQuestion}
+            />
           </div>
         {/each}
       </div>

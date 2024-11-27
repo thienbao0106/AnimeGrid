@@ -9,7 +9,7 @@ const handleCalculate = (number: number) => {
     reset: () => set(number),
     set,
   };
-}
+};
 
 export const points = handleCalculate(150);
 export const guesses = handleCalculate(5);

@@ -68,7 +68,11 @@
         placeholder="Input your answer here"
       />
       {#if showDropdown}
-        <Dropdown filterData={filteredData} {setAnswer} />
+        <Dropdown
+          className={`w-full absolute flex-col flex justify-left items-left h-[150px] z-50 overflow-y-scroll bg-white text-black`}
+          filterData={filteredData}
+          {setAnswer}
+        />
       {/if}
     </div>
     <input
